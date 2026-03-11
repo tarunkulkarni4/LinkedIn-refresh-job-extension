@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Reloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 300px;
+      font-family: "Outfit", sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      padding: 22px 20px 20px;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .header-icon {
+      width: 34px;
+      height: 34px;
+      background: #7c6ef5;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 1px;
+    }
+
+    /* ── Section label ── */
+    .label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #aaa;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* ── URL Inputs ── */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    input[type="url"] {
+      width: 100%;
+      padding: 10px 12px;
+      background: #f8f8f8;
+      border: 1.5px solid #ebebeb;
+      border-radius: 8px;
+      color: #1a1a1a;
+      font-family: "Outfit", sans-serif;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    input[type="url"]:focus {
+      border-color: #7c6ef5;
+      background: #faf9ff;
+    }
+
+    input[type="url"]::placeholder {
+      color: #ccc;
+    }
+
+    /* ── Primary button ── */
+    .btn-primary {
+      width: 100%;
+      padding: 11px;
+      background: #7c6ef5;
+      color: #fff;
+      font-family: "Outfit", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #6a5ce0;
+    }
+
+    /* ── Toggle card ── */
+    .toggle-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8f8f8;
+      border: 1.5px solid #ebebeb;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .toggle-left {
+      flex: 1;
+    }
+
+    .toggle-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Timer lives right here inside the card */
+    .toggle-timer {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .timer-val {
+      font-size: 13px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #7c6ef5;
+      min-width: 34px;
+    }
+
+    .timer-val.off {
+      color: #ccc;
+    }
+
+    .timer-val.soon {
+      color: #ef4444;
+    }
+
+    /* Switch */
+    .switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .track {
+      position: absolute;
+      inset: 0;
+      background: #ddd;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+
+    .track::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 3px;
+      left: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.25s;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+    }
+
+    .switch input:checked+.track {
+      background: #7c6ef5;
+    }
+
+    .switch input:checked+.track::before {
+      transform: translateX(20px);
+    }
+
+    /* ── Status dot ── */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: #bbb;
+      margin-bottom: 12px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      flex-shrink: 0;
+    }
+
+    .dot.on {
+      background: #22c55e;
+      box-shadow: 0 0 5px #22c55e88;
+    }
+
+    /* ── Edit button ── */
+    .btn-ghost {
+      width: 100%;
+      padding: 9px;
+      background: transparent;
+      color: #bbb;
+      font-family: "Outfit", sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1.5px solid #ebebeb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-ghost:hover {
+      color: #666;
+      border-color: #ccc;
+    }
+
+    /* ── Dynamic Inputs ── */
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn-remove {
+      padding: 6px 10px;
+      background: #fafafa;
+      color: #ccc;
+      border: 1.5px solid #ebebeb;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .btn-remove:hover {
+      background: #fff5f5;
+      color: #ef4444;
+      border-color: #fee2e2;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 10px;
+      background: #fff;
+      color: #7c6ef5;
+      font-family: "Outfit", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1.5px dashed #7c6ef5cc;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 4px;
+      margin-bottom: 20px;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: #faf9ff;
+      border-color: #7c6ef5;
+      border-style: solid;
+    }
+
+    #setupView {
+      max-height: 440px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    /* Scrollbar */
+    #setupView::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #setupView::-webkit-scrollbar-thumb {
+      background: #eee;
+      border-radius: 10px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ SETUP VIEW ═══ -->
+  <div id="setupView">
+    <div class="header">
+      <div class="header-icon">🔄</div>
+      <div>
+        <div class="header-title">Job Reloader</div>
+        <div class="header-sub">Add your job search URLs</div>
+      </div>
+    </div>
+
+    <div class="label">Job Search URLs</div>
+    <div id="urlContainer" class="input-group">
+      <!-- Inputs will be injected here -->
+    </div>
+
+    <button class="btn-secondary" id="addLinkBtn">+ Add Another Link</button>
+
+    <button class="btn-primary" id="saveBtn">Save &amp; Done</button>
+  </div>
+
+  <!-- ═══ ACTIVE VIEW ═══ -->
+  <div id="activeView" class="hidden">
+    <div class="header">
+      <div class="header-icon">🔄</div>
+      <div>
+        <div class="header-title">Job Reloader</div>
+        <div class="header-sub">Auto-reloads all saved tabs</div>
+      </div>
+    </div>
+
+    <!-- Toggle + timer in one card -->
+    <div class="toggle-card">
+      <div class="toggle-left">
+        <div class="toggle-title">Auto Reload</div>
+        <div class="toggle-hint">Refreshes every 3 minutes</div>
+        <div class="toggle-timer">
+          Next in&nbsp;<span class="timer-val off" id="timerVal">--:--</span>
+        </div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggleSwitch" />
+        <span class="track"></span>
+      </label>
+    </div>
+
+    <div class="status">
+      <div class="dot" id="statusDot"></div>
+      <span id="statusText">Off — toggle to start</span>
+    </div>
+
+    <button class="btn-ghost" id="editBtn">✏️ Edit Links</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

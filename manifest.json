@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "Job Tab Auto Reloader",
+    "version": "1.0.0",
+    "description": "Automatically refreshes saved job search URLs every 2 minutes.",
+    "permissions": [
+        "storage",
+        "alarms",
+        "tabs",
+        "windows",
+        "notifications"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_title": "Job Tab Auto Reloader"
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    }
+}
