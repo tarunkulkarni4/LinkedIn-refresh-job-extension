@@ -8,15 +8,24 @@ const ALARM_PERIOD_MINUTES = 2;
 let refreshVoice = null;
 let newJobVoice = null;
 
-// Query available system voices, prioritizing Google Cloud/external natural voices
+// Query available system voices, prioritizing Google Cloud/external natural male voices
 function initVoices() {
     chrome.tts.getVoices((voices) => {
         if (!voices || voices.length === 0) return;
         
         const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
         if (enVoices.length > 0) {
-            // Sort English voices so high-quality external/Google engine voices are placed first
-            const sortedVoices = [...enVoices].sort((a, b) => {
+            // Filter specifically for male voice engines
+            const maleVoices = enVoices.filter(v => 
+                v.gender === "male" || 
+                v.voiceName.toLowerCase().includes("male") || 
+                v.voiceName.toLowerCase().includes("david") || 
+                v.voiceName.toLowerCase().includes("mark") ||
+                v.voiceName.toLowerCase().includes("george")
+            );
+
+            // Sort so high-quality Google Cloud/Natural male voices are at the top
+            const sortedMale = [...maleVoices].sort((a, b) => {
                 const aName = a.voiceName.toLowerCase();
                 const bName = b.voiceName.toLowerCase();
                 const aPref = aName.includes("google") || aName.includes("natural") || aName.includes("cloud");
@@ -26,26 +35,24 @@ function initVoices() {
                 return 0;
             });
 
-            // Standard female voice option from sorted set
-            const femaleOption = sortedVoices.find(v => 
-                v.gender === "female" || 
-                v.voiceName.toLowerCase().includes("female") || 
-                v.voiceName.toLowerCase().includes("zira") || 
-                v.voiceName.toLowerCase().includes("hazel") ||
-                v.voiceName.toLowerCase().includes("google us english")
-            );
-
-            // Deep/rough male voice option from sorted set
-            const maleOption = sortedVoices.find(v => 
-                v.gender === "male" || 
-                v.voiceName.toLowerCase().includes("male") || 
-                v.voiceName.toLowerCase().includes("david") || 
-                v.voiceName.toLowerCase().includes("mark") ||
-                v.voiceName.toLowerCase().includes("google uk english male")
-            );
-
-            refreshVoice = femaleOption ? femaleOption.voiceName : sortedVoices[0].voiceName;
-            newJobVoice = maleOption ? maleOption.voiceName : (sortedVoices[1] ? sortedVoices[1].voiceName : sortedVoices[0].voiceName);
+            if (sortedMale.length > 0) {
+                // Assign two different premium male voices if available
+                newJobVoice = sortedMale[0].voiceName;
+                refreshVoice = sortedMale[1] ? sortedMale[1].voiceName : sortedMale[0].voiceName;
+            } else {
+                // General fallback prioritizing Google/Cloud voices if no male tag is found
+                const sortedAll = [...enVoices].sort((a, b) => {
+                    const aName = a.voiceName.toLowerCase();
+                    const bName = b.voiceName.toLowerCase();
+                    const aPref = aName.includes("google") || aName.includes("natural") || aName.includes("cloud");
+                    const bPref = bName.includes("google") || bName.includes("natural") || bName.includes("cloud");
+                    if (aPref && !bPref) return -1;
+                    if (!aPref && bPref) return 1;
+                    return 0;
+                });
+                newJobVoice = sortedAll[0].voiceName;
+                refreshVoice = sortedAll[1] ? sortedAll[1].voiceName : sortedAll[0].voiceName;
+            }
         }
         console.log(`Voices initialized - Refresh Alert: [${refreshVoice}], New Job Alert: [${newJobVoice}]`);
     });
@@ -72,10 +79,10 @@ function showNotification() {
         message: "Your job search tabs have been updated. Check for new listings!",
         priority: 2
     });
-    // Speak audio message using a distinct female voice, keeping general tone clear
+    // Speak audio message using a distinct male voice, keeping general tone clear
     const options = {
         volume: 1.0,
-        pitch: 1.1,      // Standard, slightly higher pitch for clarity
+        pitch: 1.0,      // Natural standard male pitch
         rate: 1.0        // Default pace
     };
     if (refreshVoice) {
