@@ -8,11 +8,20 @@
         "alarms",
         "tabs",
         "windows",
-        "notifications"
+        "notifications",
+        "tts"
     ],
     "background": {
         "service_worker": "background.js"
     },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*.linkedin.com/jobs/*"
+            ],
+            "js": ["content.js"]
+        }
+    ],
     "action": {
         "default_title": "Job Tab Auto Reloader"
     },

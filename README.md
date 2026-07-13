@@ -1,6 +1,6 @@
 # 🔄 Job Tab Auto Reloader – Chrome Extension
 
-A professional **Manifest V3** Chrome extension designed for job seekers. It ensures your search results are always fresh by automatically refreshing job search tabs every **3 minutes**, with smart logic to navigate back to search results if you've wandered away.
+A professional **Manifest V3** Chrome extension designed for job seekers. It ensures your search results are always fresh by automatically refreshing job search tabs every **2 minutes**, with smart logic to navigate back to search results if you've wandered away.
 
 ---
 
@@ -54,7 +54,7 @@ Refresh-job-Extension/
 ## 🔧 How It Works
 
 ### Intelligent Reload Logic (`background.js`)
-The extension uses a 3-minute `chrome.alarms` cycle. On every tick:
+The extension uses a 2-minute `chrome.alarms` cycle. On every tick:
 1. **Detection**: It scans all open tabs for URLs matching your saved search links.
 2. **Back-to-Search**: If a tracked tab has navigated away (e.g., viewing a specific job), it updates the tab URL back to the search results.
 3. **Bypass Cache**: If already on the search page, it performs a hard reload (`bypassCache: true`) to fetch the most recent data.
@@ -67,7 +67,7 @@ The extension uses a 3-minute `chrome.alarms` cycle. On every tick:
 
 ## 💡 Usage Tips
 
-- **URL Matching**: For best results, enter the **base search URL** (e.g., `https://www.linkedin.com/jobs/search/`). The extension will then track any search performed on that site and automatically bring you back to your primary search results every 3 minutes.
+- **URL Matching**: For best results, enter the **base search URL** (e.g., `https://www.linkedin.com/jobs/search/`). The extension will then track any search performed on that site and automatically bring you back to your primary search results every 2 minutes.
 - **Proactive Tracking**: The extension now detects matching tabs the moment you navigate to them, ensuring they are queued for the next refresh even if you click into a job listing immediately.
 - **Multiple Sources**: You can track an unlimited number of job boards simultaneously using the **+ Add Link** button.
 
